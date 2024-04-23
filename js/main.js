@@ -38,7 +38,7 @@ Vue.component('task-card', {
             <div class="column">
                 <div v-for="(note, index) in notes" :key="index" class="note">
                     <p > Название заметки: {{ note.title }}</p>
-                    <p  @click="toggleCompleted(note)" :class="{ 'completed': note.completed }"> Описание задачи: {{ note.description }}</p>
+                    <p  @click="toggleCompleted(note)" :class="{ 'completed': note.completed }">Задачи: {{ note.description }}</p>
                     <div v-if="note.additionalTasks && note.additionalTasks.length > 0" >
                         <p>Дополнительные задачи: </p>
                          <p v-for="(task, taskIndex) in note.additionalTasks" @click="toggleCompleted(task, index, taskIndex)" :class="{ 'completed': task.completed }">{{ task.name }}</p>
@@ -50,7 +50,11 @@ Vue.component('task-card', {
                 </div>
             </div>
             <div class="column"></div>
-            <div class="column"></div>
+            <div class="column">
+             <div v-for="(completedNote, index) in completedNotes" :key="'completed' + index">
+                    <p>Выполненные: {{ completedNote.title }}</p>
+               </div>
+            </div>
         </div>  
     `,
     props: {
@@ -61,7 +65,8 @@ Vue.component('task-card', {
         return {
             notes: [],
             newTasks:[],
-            completed:false
+            completed:false,
+            completedNotes:[]
         };
     },
     methods: {
@@ -82,11 +87,18 @@ Vue.component('task-card', {
             } else {
                 this.notes[noteIndex].additionalTasks[taskIndex].completed = !this.notes[noteIndex].additionalTasks[taskIndex].completed;
             }
+            const allTasksCompleted = this.notes[noteIndex].additionalTasks.every(task => task.completed);
+            if (allTasksCompleted && item.completed) {
+                const completedNotes = this.notes.splice(noteIndex, 1);
+                this.completedNotes.push(completedNotes[0]);
+                localStorage.setItem('completedNotes', JSON.stringify(this.completedNotes));
+            }
             localStorage.setItem('notes', JSON.stringify(this.notes));
         }
     },
     created() {
         const notes = JSON.parse(localStorage.getItem('notes')) || [];
+        this.completedNotes = JSON.parse(localStorage.getItem('completedNotes')) || [];
         this.newTasks = new Array(notes.length).fill('');
         this.notes = notes;
     }
