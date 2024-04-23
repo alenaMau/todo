@@ -1,0 +1,57 @@
+body {
+    font-family: tahoma;
+    color:#282828;
+    margin: 0px;
+}
+
+.column {
+    border: #e2dada 2px solid;
+    margin: 10px;
+    width: 40%;
+    padding: 10px;
+    border-radius: 30px;
+}
+
+.note {
+    border: 2px #a9a9c6 solid;
+    border-radius: 20px;
+    margin: 10px;
+    padding: 10px;
+}
+
+
+.product {
+    display: flex;
+    flex-flow: wrap;
+    padding: 1rem;
+}
+
+.card {
+    display: flex;
+    flex-direction: row;
+}
+
+button {
+    margin-top: 30px;
+    border: none;
+    background-color: #99b7cd;
+    color: white;
+    height: 40px;
+    width: 100px;
+    font-size: 14px;
+    border-radius: 15px;
+}
+
+
+.review-form {
+    width: 400px;
+    padding: 20px;
+    margin: 40px;
+    border: 1px solid #d8d8d8;
+}
+
+input {
+    padding: 10px;
+    border-radius: 10px;
+
+}
