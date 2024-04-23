@@ -34,14 +34,14 @@ Vue.component('task-input', {
 
 Vue.component('task-card', {
     template: `
-        <div class="card">
+         <div class="card">
             <div class="column">
                 <div v-for="(note, index) in notes" :key="index" class="note">
-                    <p if="!completed"> Название заметки: {{ note.title }}</p>
-                    <p> Описание задачи: {{ note.description }}</p>
-                    <div v-if="note.additionalTasks && note.additionalTasks.length > 0">
+                    <p > Название заметки: {{ note.title }}</p>
+                    <p  @click="toggleCompleted(note)" :class="{ 'completed': note.completed }"> Описание задачи: {{ note.description }}</p>
+                    <div v-if="note.additionalTasks && note.additionalTasks.length > 0" >
                         <p>Дополнительные задачи: </p>
-                        <p v-for="task in note.additionalTasks">{{ task }}</p>
+                         <p v-for="(task, taskIndex) in note.additionalTasks" @click="toggleCompleted(task, index, taskIndex)" :class="{ 'completed': task.completed }">{{ task.name }}</p>
                     </div>
                 <form @submit.prevent="addTask(index)">
                     <input type="text" v-model="newTasks[index]" placeholder="Добавить задачу">
@@ -51,7 +51,7 @@ Vue.component('task-card', {
             </div>
             <div class="column"></div>
             <div class="column"></div>
-        </div>
+        </div>  
     `,
     props: {
         title: String,
@@ -60,22 +60,29 @@ Vue.component('task-card', {
     data() {
         return {
             notes: [],
-            currentTask: '',
-            newTasks:[]
+            newTasks:[],
+            completed:false
         };
     },
     methods: {
         addTask(index) {
             if (this.newTasks[index] && this.newTasks[index].trim() !== '') {
                 if (!this.notes[index].additionalTasks) {
-                    this.notes[index].additionalTasks = [this.newTasks[index]];
+                    this.notes[index].additionalTasks = [{ name: this.newTasks[index], completed: false }];
                 } else {
-                    this.notes[index].additionalTasks.push(this.newTasks[index]);
+                    this.notes[index].additionalTasks.push({ name: this.newTasks[index], completed: false });
                 }
-                window.location.reload()
                 this.newTasks[index] = '';
                 localStorage.setItem('notes', JSON.stringify(this.notes));
             }
+        },
+        toggleCompleted(item, noteIndex, taskIndex) {
+            if (typeof taskIndex === 'undefined') {
+                item.completed = !item.completed;
+            } else {
+                this.notes[noteIndex].additionalTasks[taskIndex].completed = !this.notes[noteIndex].additionalTasks[taskIndex].completed;
+            }
+            localStorage.setItem('notes', JSON.stringify(this.notes));
         }
     },
     created() {
